@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud Migration FAQ Chatbot</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
+        #chatbox { border: 1px solid #ccc; padding: 15px; height: 300px; overflow-y: auto; }
+        .bot, .user { margin: 10px 0; }
+        .bot { color: green; }
+        .user { text-align: right; color: blue; }
+    </style>
+</head>
+<body>
+    <h2>Ask Me About LCloud Migration!</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type a question..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const msg = input.value;
+            if (!msg) return;
+
+            addMessage("You", msg, "user");
+            input.value = "";
+
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            addMessage("Bot", data.response, "bot");
+        }
+
+        function addMessage(sender, text, className) {
+            const chat = document.getElementById("chatbox");
+            const message = document.createElement("div");
+            message.className = className;
+            message.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            chat.appendChild(message);
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
